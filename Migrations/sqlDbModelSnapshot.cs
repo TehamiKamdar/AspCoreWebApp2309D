@@ -16,7 +16,7 @@ namespace AspCoreWebApp2309D.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.12")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -58,6 +58,33 @@ namespace AspCoreWebApp2309D.Migrations
                     b.HasKey("Customer_Id");
 
                     b.ToTable("customers");
+                });
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Products", b =>
+                {
+                    b.Property<int>("Product_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_Id"));
+
+                    b.Property<string>("Product_Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Product_Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Product_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Product_Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("Product_Id");
+
+                    b.ToTable("tblProducts");
                 });
 #pragma warning restore 612, 618
         }
