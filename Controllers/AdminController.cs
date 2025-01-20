@@ -37,5 +37,33 @@ namespace AspCoreWebApp2309D.Controllers
             ModelState.Clear();
             return View();
         }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Register(Users us, string User_Name, string User_Email)
+        {
+            us.User_Role = "Customer";
+            db.tblUsers.Add(us);
+            db.SaveChanges();
+            ModelState.Clear();
+
+            Customer cs = new Customer
+            {
+                Customer_Name = User_Name,
+                Customer_Email = User_Email,
+                User_Id = us.User_Id
+            };
+            db.customers.Add(cs);
+            db.SaveChanges();
+            return View();
+        }
+
+        public IActionResult Customers()
+        {
+            return View(db.customers.ToList());
+        }
     }
 }

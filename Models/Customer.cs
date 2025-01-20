@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspCoreWebApp2309D.Models
 {
@@ -15,20 +16,18 @@ namespace AspCoreWebApp2309D.Models
         public string Customer_Email { get; set; }
 
         [Phone]
-        public string Customer_Phone { get; set; }
-
-        [Required]
-        [Range(8, 32, ErrorMessage ="Password must contain letter between 8 and 32")]
-        [DataType(DataType.Password)]
-        public string Customer_Password {  get; set; }
+        public string? Customer_Phone { get; set; }
 
         
         [StringLength(50)]
-        public string Customer_City { get; set; }
-        
+        public string? Customer_City { get; set; }
         
         
         [StringLength(200)]
         public string? Customer_Address { get; set; }
+
+        public int User_Id { get; set; }
+        [ForeignKey("User_Id")]
+        public virtual Users users { get; set; }
     }
 }

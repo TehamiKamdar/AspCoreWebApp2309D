@@ -3,6 +3,7 @@ using AspCoreWebApp2309D.dbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AspCoreWebApp2309D.Migrations
 {
     [DbContext(typeof(sqlDb))]
-    partial class sqlDbModelSnapshot : ModelSnapshot
+    [Migration("20250120102317_usersAndCustomers")]
+    partial class usersAndCustomers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,7 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Customer_City")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -47,14 +51,10 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Customer_Phone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("User_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Customer_Id");
-
-                    b.HasIndex("User_Id");
 
                     b.ToTable("customers");
                 });
@@ -113,17 +113,6 @@ namespace AspCoreWebApp2309D.Migrations
                     b.HasKey("User_Id");
 
                     b.ToTable("tblUsers");
-                });
-
-            modelBuilder.Entity("AspCoreWebApp2309D.Models.Customer", b =>
-                {
-                    b.HasOne("AspCoreWebApp2309D.Models.Users", "users")
-                        .WithMany()
-                        .HasForeignKey("User_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("users");
                 });
 #pragma warning restore 612, 618
         }
