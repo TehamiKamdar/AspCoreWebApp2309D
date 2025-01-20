@@ -61,7 +61,7 @@ namespace AspCoreWebApp2309D.Controllers
             return View();
         }
 
-        public IActionResult Customer()
+        public IActionResult Customers()
         {
             return View(db.customers.ToList());
         }
