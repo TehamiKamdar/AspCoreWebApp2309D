@@ -1,27 +1,57 @@
 ﻿using AspCoreWebApp2309D.dbContext;
 using AspCoreWebApp2309D.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace AspCoreWebApp2309D.Controllers
 {
     public class AdminController : Controller
     {
         sqlDb db;
+        IWebHostEnvironment env;
 
-        public AdminController(sqlDb db)
+        public AdminController(sqlDb db, IWebHostEnvironment env)
         {
             this.db = db;
+            this.env = env;
         }
 
 
         public IActionResult Index()
         {
-            return View();
+            var user = HttpContext.Session.GetString("Name");
+            var role = HttpContext.Session.GetString("Role");
+            if (user is not null)
+            {
+                if (role == "Admin")
+                {
+                    ViewBag.username = user;
+                    return View();
+                }
+                else
+                {
+                    ViewBag.username = user;
+                    return RedirectToAction("Index", "Web");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
         }
 
         public IActionResult Products()
         {
-            return View(db.tblProducts.ToList());
+            var user = HttpContext.Session.GetString("Name");
+            if (user is not null)
+            {
+                ViewBag.username = user;
+                return View(db.tblProducts.ToList());
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
         }
 
         public IActionResult Create()
@@ -29,8 +59,25 @@ namespace AspCoreWebApp2309D.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Products prod)
+        public IActionResult Create(Products prod, IFormFile Product_Image)
         {
+            string fileName = "";
+            var fileExtension = Path.GetExtension(Product_Image.FileName).ToLower();
+            if (fileExtension != ".png")
+            {
+                ViewBag.error = "File Method Not Supported";
+                return View();
+            }
+            else
+            {
+                string location = Path.Combine(env.WebRootPath, "productImages");
+                fileName = Guid.NewGuid().ToString() + "_" + Product_Image.FileName;
+                string filePath = Path.Combine(location, fileName);
+                Product_Image.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+            
+            prod.Product_Image = fileName;
+            
             db.tblProducts.Add(prod);
             db.SaveChanges();
             ViewBag.success = "Product Inserted";
@@ -64,6 +111,68 @@ namespace AspCoreWebApp2309D.Controllers
         public IActionResult Customers()
         {
             return View(db.customers.ToList());
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(Users us, string User_Email, string User_Password)
+        {
+            var user = db.tblUsers.FirstOrDefault(x => x.User_Email == User_Email);
+
+            if (user.User_Email == User_Email && user.User_Password == User_Password)
+            {
+                HttpContext.Session.SetString("Name", user.User_Name);
+                HttpContext.Session.SetString("Role", user.User_Role);
+                if (user.User_Role == "Admin")
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Web");
+                }
+            }
+            else
+            {
+                ViewBag.error = "User Email and Password is not correct";
+                return View();
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var product = db.tblProducts.Find(id);
+            return View(product);
+        }
+        [HttpPost]
+        public IActionResult Edit(Products prod)
+        {
+            db.tblProducts.Update(prod);
+            db.SaveChanges();
+            TempData["success"] = "Product Updated";
+            return RedirectToAction("Products");
+        }
+        public IActionResult Delete(int id)
+        {
+            var product = db.tblProducts.Find(id);
+            return View(product);
+        }
+        [HttpPost]
+        public IActionResult Delete(Products prod)
+        {
+            db.tblProducts.Remove(prod);
+            db.SaveChanges();
+            TempData["success"] = "Product Deleted";
+            return RedirectToAction("Products");
         }
     }
 }
