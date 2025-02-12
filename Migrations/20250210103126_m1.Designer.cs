@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AspCoreWebApp2309D.Migrations
 {
     [DbContext(typeof(sqlDb))]
-    [Migration("20250117104342_ProductsAdded")]
-    partial class ProductsAdded
+    [Migration("20250210103126_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,23 @@ namespace AspCoreWebApp2309D.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Category", b =>
+                {
+                    b.Property<int>("Category_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Category_Id"));
+
+                    b.Property<string>("Category_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Category_Id");
+
+                    b.ToTable("tblCategories");
+                });
 
             modelBuilder.Entity("AspCoreWebApp2309D.Models.Customer", b =>
                 {
@@ -37,7 +54,6 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Customer_City")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -50,15 +66,15 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Customer_Password")
-                        .IsRequired()
+                    b.Property<string>("Customer_Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Customer_Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("User_Id")
+                        .HasColumnType("int");
 
                     b.HasKey("Customer_Id");
+
+                    b.HasIndex("User_Id");
 
                     b.ToTable("customers");
                 });
@@ -70,6 +86,9 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_Id"));
+
+                    b.Property<int>("Product_Category")
+                        .HasColumnType("int");
 
                     b.Property<string>("Product_Description")
                         .IsRequired()
@@ -85,9 +104,66 @@ namespace AspCoreWebApp2309D.Migrations
                     b.Property<int>("Product_Price")
                         .HasColumnType("int");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Product_Id");
 
+                    b.HasIndex("Product_Category");
+
                     b.ToTable("tblProducts");
+                });
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Users", b =>
+                {
+                    b.Property<int>("User_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("User_Id"));
+
+                    b.Property<string>("User_Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User_Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User_Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("User_Id");
+
+                    b.ToTable("tblUsers");
+                });
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Customer", b =>
+                {
+                    b.HasOne("AspCoreWebApp2309D.Models.Users", "users")
+                        .WithMany()
+                        .HasForeignKey("User_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("users");
+                });
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Products", b =>
+                {
+                    b.HasOne("AspCoreWebApp2309D.Models.Category", "category")
+                        .WithMany()
+                        .HasForeignKey("Product_Category")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("category");
                 });
 #pragma warning restore 612, 618
         }

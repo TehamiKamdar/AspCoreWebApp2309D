@@ -38,6 +38,15 @@
                 <input asp-for="Product_Image" type="file" class="form-control" />
                 <span asp-validation-for="Product_Image" class="text-danger"></span>
             </div>
+            @* <div class="form-group">
+                <label asp-for="Product_Category" class="control-label"></label>
+                <select asp-for="Product_Category" class ="form-control" asp-items="ViewBag.Product_Category">
+                    @foreach (var item in @ViewBag.categories)
+                    {
+                        <option value="@item.Category_Id">@item.Category_Name</option>
+                    }
+                </select>
+            </div> *@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

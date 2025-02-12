@@ -56,6 +56,8 @@ namespace AspCoreWebApp2309D.Controllers
 
         public IActionResult Create()
         {
+            var categories = db.tblCategories.ToList();
+            ViewBag.categories = categories;
             return View();
         }
         [HttpPost]
@@ -77,12 +79,12 @@ namespace AspCoreWebApp2309D.Controllers
             }
             
             prod.Product_Image = fileName;
-            
+            prod.Product_Category = 1;
             db.tblProducts.Add(prod);
             db.SaveChanges();
             ViewBag.success = "Product Inserted";
             ModelState.Clear();
-            return View();
+            return RedirectToAction("Create");
         }
 
         public IActionResult Register()
@@ -173,6 +175,26 @@ namespace AspCoreWebApp2309D.Controllers
             db.SaveChanges();
             TempData["success"] = "Product Deleted";
             return RedirectToAction("Products");
+        }
+
+        public IActionResult Category()
+        {
+            var categories = db.tblCategories.ToList();
+            return View(categories);
+        }
+
+        public IActionResult CreateCategory()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateCategory(Category category)
+        {
+            db.tblCategories.Add(category);
+            db.SaveChanges();
+            ViewBag.success = "Category Added";
+            ModelState.Clear();
+            return View();
         }
     }
 }

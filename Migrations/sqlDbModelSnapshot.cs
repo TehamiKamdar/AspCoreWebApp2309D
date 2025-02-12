@@ -21,6 +21,23 @@ namespace AspCoreWebApp2309D.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Category", b =>
+                {
+                    b.Property<int>("Category_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Category_Id"));
+
+                    b.Property<string>("Category_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Category_Id");
+
+                    b.ToTable("tblCategories");
+                });
+
             modelBuilder.Entity("AspCoreWebApp2309D.Models.Customer", b =>
                 {
                     b.Property<int>("Customer_Id")
@@ -67,6 +84,9 @@ namespace AspCoreWebApp2309D.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_Id"));
 
+                    b.Property<int>("Product_Category")
+                        .HasColumnType("int");
+
                     b.Property<string>("Product_Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -86,6 +106,8 @@ namespace AspCoreWebApp2309D.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Product_Id");
+
+                    b.HasIndex("Product_Category");
 
                     b.ToTable("tblProducts");
                 });
@@ -128,6 +150,17 @@ namespace AspCoreWebApp2309D.Migrations
                         .IsRequired();
 
                     b.Navigation("users");
+                });
+
+            modelBuilder.Entity("AspCoreWebApp2309D.Models.Products", b =>
+                {
+                    b.HasOne("AspCoreWebApp2309D.Models.Category", "category")
+                        .WithMany()
+                        .HasForeignKey("Product_Category")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("category");
                 });
 #pragma warning restore 612, 618
         }

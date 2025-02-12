@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspCoreWebApp2309D.Models
 {
@@ -15,5 +16,9 @@ namespace AspCoreWebApp2309D.Models
         public string Slug { get; set;}
 
         public string? Product_Image { get; set;}
+
+        public int Product_Category { get; set;}
+        [ForeignKey("Product_Category")]
+        public virtual Category category { get; set;}
     }
 }

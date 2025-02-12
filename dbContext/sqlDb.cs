@@ -13,5 +13,6 @@ namespace AspCoreWebApp2309D.dbContext
         public DbSet<Customer> customers { get; set; }
         public DbSet<Products> tblProducts { get; set; }
         public DbSet<Users> tblUsers { get; set; }
+        public DbSet<Category> tblCategories { get; set; }
     }
 }
